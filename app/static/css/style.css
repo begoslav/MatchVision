@@ -1,0 +1,498 @@
+:root {
+    --bg-body:      #0d0d0d;
+    --bg-dark:      #1a1a1a;
+    --bg-darker:    #0d0d0d;
+    --bg-card:      #1a1a1a;
+    --bg-card-head: #0d0d0d;
+    --bg-input:     #2a2a2a;
+    --bg-input-foc: #333;
+    --bg-navbar:    #1a1a1a;
+    --text-main:    #e0e0e0;
+    --text-muted:   #999;
+    --text-head:    #007bff;
+    --border-color: #333;
+    --border-input: #444;
+    --table-stripe: rgba(255,255,255,0.02);
+    --table-hover:  rgba(0,123,255,0.1);
+    --scrollbar-track: #1a1a1a;
+    --scrollbar-thumb: #444;
+    --footer-bg:    #0d0d0d;
+    --shadow:       rgba(0,0,0,0.5);
+    --primary-color: #007bff;
+}
+
+html[data-theme="light"],
+body.light-mode {
+    --bg-body:      #f0f2f5;
+    --bg-dark:      #ffffff;
+    --bg-darker:    #f0f2f5;
+    --bg-card:      #ffffff;
+    --bg-card-head: #f8f9fa;
+    --bg-input:     #ffffff;
+    --bg-input-foc: #ffffff;
+    --bg-navbar:    #1a1a1a;
+    --text-main:    #212529;
+    --text-muted:   #6c757d;
+    --text-head:    #0056b3;
+    --border-color: #dee2e6;
+    --border-input: #ced4da;
+    --table-stripe: rgba(0,0,0,0.03);
+    --table-hover:  rgba(0,123,255,0.07);
+    --scrollbar-track: #f0f2f5;
+    --scrollbar-thumb: #adb5bd;
+    --footer-bg:    #ffffff;
+    --shadow:       rgba(0,0,0,0.1);
+}
+
+html, body {
+    height: 100%;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+main {
+    flex: 1;
+}
+
+.bg-darker {
+    background-color: var(--bg-darker) !important;
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+}
+
+/* Navbar styling */
+.navbar-dark {
+    background-color: var(--bg-navbar) !important;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: #007bff !important;
+    transition: color 0.3s;
+}
+
+.navbar-brand:hover {
+    color: #0056b3 !important;
+}
+
+.nav-link {
+    color: #e0e0e0 !important;
+    transition: color 0.3s;
+    margin: 0 5px;
+}
+
+.nav-link:hover {
+    color: #007bff !important;
+}
+
+.nav-link i {
+    margin-right: 5px;
+}
+
+/* Theme toggle button */
+#themeToggle {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #e0e0e0;
+    border-radius: 20px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+    margin-left: 8px;
+}
+#themeToggle:hover {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+/* Cards */
+.card {
+    border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    border-color: var(--border-color) !important;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px var(--shadow);
+}
+
+.card-match {
+    border: 1px solid var(--border-color);
+}
+
+.card-match:hover {
+    border-color: #007bff;
+}
+
+.card-team {
+    border: 1px solid var(--border-color);
+}
+
+.card-team:hover {
+    border-color: #28a745;
+}
+
+.card-link {
+    border: 1px solid var(--border-color);
+    transition: all 0.3s;
+}
+
+.card-link:hover {
+    border-color: #007bff;
+    transform: translateY(-4px);
+}
+
+.card-header {
+    background-color: var(--bg-card-head) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-main);
+}
+
+.card-body {
+    background-color: var(--bg-card);
+    color: var(--text-main);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-success:hover { transform: translateY(-2px); }
+.btn-danger:hover  { transform: translateY(-2px); }
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    color: #000;
+}
+
+/* Tables */
+.table {
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+.table-dark {
+    background-color: var(--bg-card);
+    --bs-table-bg: var(--bg-card);
+    --bs-table-color: var(--text-main);
+    --bs-table-border-color: var(--border-color);
+}
+
+.table-dark thead {
+    background-color: var(--bg-card-head);
+    border-color: var(--border-color);
+}
+
+.table th {
+    border-color: var(--border-color);
+    font-weight: 600;
+    color: var(--text-head);
+}
+
+.table td {
+    border-color: var(--border-color);
+    padding: 12px;
+    color: var(--text-main);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--table-stripe);
+}
+
+.table-striped tbody tr:hover,
+.table-hover tbody tr:hover {
+    background-color: var(--table-hover);
+}
+
+/* Forms */
+.form-control {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
+    color: var(--text-main);
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    background-color: var(--bg-input-foc);
+    border-color: #007bff;
+    color: var(--text-main);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+
+/* Alerts */
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+
+.alert-info    { background-color: rgba(23,162,184,0.1);  border-left: 4px solid #17a2b8; color: #0c6370; }
+.alert-success { background-color: rgba(40,167,69,0.1);   border-left: 4px solid #28a745; color: #1a5e2a; }
+.alert-danger  { background-color: rgba(220,53,69,0.1);   border-left: 4px solid #dc3545; color: #7b1a22; }
+.alert-warning { background-color: rgba(255,193,7,0.1);   border-left: 4px solid #ffc107; color: #7d5a00; }
+
+body:not(.light-mode) .alert-info    { color: #86d0de; }
+body:not(.light-mode) .alert-success { color: #8cde9f; }
+body:not(.light-mode) .alert-danger  { color: #f0a0a5; }
+body:not(.light-mode) .alert-warning { color: #fff9c4; }
+
+/* Badges */
+.badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* List group */
+.list-group-item {
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+/* Footer */
+footer {
+    background-color: var(--footer-bg);
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
+
+footer p {
+    color: var(--text-muted);
+}
+
+/* Utility */
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.border-secondary {
+    border-color: var(--border-color) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    h1 { font-size: 1.75rem; }
+    .btn-sm { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.card { animation: fadeIn 0.3s ease-in-out; }
+
+.card-match .display-6 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.card-match .small { color: var(--text-muted); }
+
+/* Status indicators */
+.status-live {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #dc3545;
+    animation: pulse 1.5s infinite;
+    margin-right: 5px;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.5; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #777; }
+
+/* Charts */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: 2rem;
+}
+canvas { max-height: 300px; }
+
+/* Featured leagues card + mini table */
+.league-card {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+}
+.league-card .table {
+    --bs-table-bg:            var(--bg-card);
+    --bs-table-color:         var(--text-main);
+    --bs-table-border-color:  var(--border-color);
+    background-color: var(--bg-card);
+    color: var(--text-main);
+}
+.league-card .table thead tr {
+    background-color: var(--bg-card-head);
+    color: var(--text-muted);
+}
+.league-card .table thead th {
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
+.league-card .table tbody td {
+    border-color: var(--border-color);
+    color: var(--text-main);
+}
+.league-row:hover td {
+    background-color: var(--table-hover) !important;
+}
+.league-team-link {
+    color: var(--text-main);
+    transition: color 0.2s;
+}
+.league-team-link:hover {
+    color: var(--primary-color);
+}
+
+/* =====================================================================
+   LIGHT MODE — overrides for hardcoded Bootstrap dark utility classes
+   ===================================================================== */
+
+/* Form inputs that use bg-secondary + text-light */
+body.light-mode .form-control.bg-secondary,
+body.light-mode .bg-secondary.form-control {
+    background-color: var(--bg-input) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-input) !important;
+}
+body.light-mode .form-control.bg-secondary:focus,
+body.light-mode .bg-secondary.form-control:focus {
+    background-color: var(--bg-input-foc) !important;
+    border-color: #007bff !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+/* text-light on cards, links, badge text */
+body.light-mode .text-light {
+    color: var(--text-main) !important;
+}
+
+/* border-secondary */
+body.light-mode .border-secondary {
+    border-color: var(--border-color) !important;
+}
+
+/* table-dark — override Bootstrap's hardcoded dark table CSS variables */
+body.light-mode .table-dark {
+    --bs-table-bg:             var(--bg-card);
+    --bs-table-color:          var(--text-main);
+    --bs-table-border-color:   var(--border-color);
+    --bs-table-striped-bg:     var(--table-stripe);
+    --bs-table-striped-color:  var(--text-main);
+    --bs-table-hover-bg:       var(--table-hover);
+    --bs-table-hover-color:    var(--text-main);
+    --bs-table-active-bg:      var(--table-hover);
+    background-color: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+body.light-mode .table-dark > :not(caption) > * > * {
+    background-color: transparent;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+body.light-mode .table-dark thead > tr > th {
+    background-color: var(--bg-card-head) !important;
+    color: var(--text-head) !important;
+    border-color: var(--border-color) !important;
+}
+body.light-mode .table.table-dark.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: var(--table-stripe) !important;
+}
+body.light-mode .table.table-dark tbody tr:hover > * {
+    background-color: var(--table-hover) !important;
+}
+
+/* Badges with bg-dark or bg-secondary inside light mode */
+body.light-mode .badge.bg-dark {
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+}
+
+/* Theme toggle button in light mode */
+body.light-mode #themeToggle {
+    border-color: rgba(0, 0, 0, 0.2);
+    color: #444;
+}
+body.light-mode #themeToggle:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* card-header  (some templates use border-secondary on it) */
+body.light-mode .card-header {
+    background-color: var(--bg-card-head) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* hr colours */
+body.light-mode hr {
+    border-color: var(--border-color) !important;
+    opacity: 1;
+}

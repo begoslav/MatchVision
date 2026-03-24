@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Přihlášení - MatchVision{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card bg-darker border-secondary">
+                <div class="card-body p-5">
+                    <h2 class="card-title mb-4 text-center">
+                        <i class="fas fa-sign-in-alt"></i> Přihlášení
+                    </h2>
+                    
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.username(class="form-control bg-secondary text-light border-0",
+                                            placeholder="Uživatelské jméno") }}
+                            {% if form.username.errors %}
+                                <small class="text-danger d-block mt-2">
+                                    {{ form.username.errors[0] }}
+                                </small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.password(class="form-control bg-secondary text-light border-0",
+                                            placeholder="Heslo",
+                                            type="password") }}
+                            {% if form.password.errors %}
+                                <small class="text-danger d-block mt-2">
+                                    {{ form.password.errors[0] }}
+                                </small>
+                            {% endif %}
+                        </div>
+                        
+                        {{ form.submit(class="btn btn-primary w-100 fw-bold") }}
+                    </form>
+                    
+                    <hr class="my-4 border-secondary">
+                    
+                    <p class="text-center text-muted mb-0">
+                        Nemáte účet? 
+                        <a href="{{ url_for('auth.register') }}" class="text-primary text-decoration-none">Zaregistrovat se</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

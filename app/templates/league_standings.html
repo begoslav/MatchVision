@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Tabulka soutěže - MatchVision{% endblock %}
+
+{% block content %}
+<div class="container">
+    <a href="{{ url_for('main.leagues') }}" class="btn btn-outline-secondary mb-4">
+        <i class="fas fa-arrow-left"></i> Zpět
+    </a>
+
+    <h1 class="mb-4">Tabulka soutěže</h1>
+
+    {% if standings %}
+        <div class="card bg-darker border-secondary">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 50px;">Poz.</th>
+                                <th>Tým</th>
+                                <th class="text-center">Z</th>
+                                <th class="text-center">V</th>
+                                <th class="text-center">R</th>
+                                <th class="text-center">P</th>
+                                <th class="text-center">Rozdíl</th>
+                                <th class="text-center">Body</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for team in standings %}
+                                <tr>
+                                    <td class="text-center fw-bold">{{ team.rank }}</td>
+                                    <td>
+                                        <img src="{{ team.team.logo or 'https://via.placeholder.com/30' }}" 
+                                             alt="" style="max-width: 30px;" class="me-2">
+                                        <a href="{{ url_for('teams.detail', team_id=team.team.id) }}" 
+                                           class="text-light text-decoration-none">
+                                            {{ team.team.name }}
+                                        </a>
+                                    </td>
+                                    <td class="text-center">{{ team.all.played }}</td>
+                                    <td class="text-center text-success">{{ team.all.win }}</td>
+                                    <td class="text-center text-warning">{{ team.all.draw }}</td>
+                                    <td class="text-center text-danger">{{ team.all.lose }}</td>
+                                    <td class="text-center">{{ team.goalsDiff }}</td>
+                                    <td class="text-center fw-bold">{{ team.points }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> Tabulka se nepodařila načíst.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

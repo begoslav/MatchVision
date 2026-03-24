@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}MatchVision - Domů{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero section -->
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <div class="bg-gradient p-5 rounded-lg text-center">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-soccer-ball"></i> MatchVision
+                </h1>
+                <p class="lead text-muted">Sledujte fotbalové zápasy v reálném čase, statistiky a detaily s AI shrnutím</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured leagues section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="fas fa-trophy text-warning"></i> Vybrané ligy
+                </h2>
+                <a href="{{ url_for('main.leagues') }}" class="btn btn-outline-primary btn-sm">Všechny soutěže</a>
+            </div>
+        </div>
+
+        {% if featured_leagues %}
+            {% for league in featured_leagues %}
+                <div class="col-lg-4 mb-4">
+                    <div class="card league-card h-100 border-0 shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                        <!-- League header -->
+                        <div class="card-header d-flex align-items-center gap-2 py-3" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+                            {% if league.logo %}
+                                <img src="{{ league.logo }}" alt="{{ league.name }}" style="height: 32px; width: 32px; object-fit: contain;">
+                            {% endif %}
+                            <div>
+                                <div class="fw-bold text-white">{{ league.name }}</div>
+                                <small class="text-muted" style="font-size: 0.75rem;">{{ league.country }}</small>
+                            </div>
+                            <a href="{{ url_for('main.league_standings', league_id=league.id) }}"
+                               class="btn btn-sm btn-outline-light ms-auto" style="font-size: 0.75rem;">
+                                Celá tabulka
+                            </a>
+                        </div>
+                        <!-- Mini standings table -->
+                        <div class="card-body p-0">
+                            <table class="table table-sm mb-0" style="font-size: 0.85rem;">
+                                <thead>
+                                    <tr class="text-muted" style="font-size: 0.75rem;">
+                                        <th class="ps-3" style="width: 28px;">#</th>
+                                        <th>Tým</th>
+                                        <th class="text-center">Z</th>
+                                        <th class="text-center text-success">V</th>
+                                        <th class="text-center text-warning">R</th>
+                                        <th class="text-center text-danger">P</th>
+                                        <th class="text-center fw-bold">B</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for team in league.standings[:6] %}
+                                        <tr class="align-middle league-row">
+                                            <td class="ps-3 text-muted fw-bold">{{ team.rank }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <img src="{{ team.team.logo }}" alt="{{ team.team.name }}"
+                                                         style="height: 20px; width: 20px; object-fit: contain;">
+                                                    <a href="{{ url_for('teams.detail', team_id=team.team.id) }}"
+                                                       class="text-decoration-none league-team-link">
+                                                        {{ team.team.name }}
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td class="text-center text-muted">{{ team.all.played }}</td>
+                                            <td class="text-center text-success">{{ team.all.win }}</td>
+                                            <td class="text-center text-warning">{{ team.all.draw }}</td>
+                                            <td class="text-center text-danger">{{ team.all.lose }}</td>
+                                            <td class="text-center fw-bold text-primary">{{ team.points }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Tabulky momentálně nejsou k dispozici. Zkuste to prosím znovu.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Quick links -->
+    <div class="row mt-5 mb-4">
+        <div class="col-md-4 mb-3">
+            <a href="{{ url_for('main.leagues') }}" class="card card-link bg-darker border-secondary text-decoration-none text-light h-100">
+                <div class="card-body text-center">
+                    <h5><i class="fas fa-trophy text-warning"></i> Soutěže</h5>
+                    <p class="text-muted">Tabulky a výsledky hlavních lig</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{{ url_for('teams.search') }}" class="card card-link bg-darker border-secondary text-decoration-none text-light h-100">
+                <div class="card-body text-center">
+                    <h5><i class="fas fa-search text-info"></i> Vyhledávání</h5>
+                    <p class="text-muted">Vyhledejte svůj oblíbený tým</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('favorites.list_favorites') }}" class="card card-link bg-darker border-secondary text-decoration-none text-light h-100">
+                    <div class="card-body text-center">
+                        <h5><i class="fas fa-star text-success"></i> Moje oblíbené</h5>
+                        <p class="text-muted">Vaše sledované týmy</p>
+                    </div>
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="card card-link bg-darker border-secondary text-decoration-none text-light h-100">
+                    <div class="card-body text-center">
+                        <h5><i class="fas fa-user-plus text-success"></i> Registrace</h5>
+                        <p class="text-muted">Vytvořit si účet</p>
+                    </div>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

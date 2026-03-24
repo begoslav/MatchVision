@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail týmu - MatchVision{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if team_info %}
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <a href="{{ url_for('teams.search') }}" class="btn btn-outline-secondary mb-4">
+                    <i class="fas fa-arrow-left"></i> Zpět na vyhledávání
+                </a>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-lg-3 text-center mb-4 mb-lg-0">
+                <div class="card bg-darker border-secondary">
+                    <div class="card-body p-4">
+                        <img src="{{ team_info.team.logo or 'https://via.placeholder.com/150' }}" 
+                             alt="{{ team_info.team.name }}" class="img-fluid mb-4" style="max-width: 150px;">
+                        <h3 class="card-title">{{ team_info.team.name }}</h3>
+                        <p class="text-muted">
+                            <i class="fas fa-map-marker-alt"></i> {{ team_info.team.country or 'N/A' }}
+                        </p>
+                        
+                        {% if current_user.is_authenticated %}
+                            {% if is_favorite %}
+                                <button class="btn btn-danger w-100" onclick="removeFavorite({{ team_id }})">
+                                    <i class="fas fa-star"></i> Odstranit z oblíbených
+                                </button>
+                            {% else %}
+                                <button class="btn btn-outline-warning w-100" onclick="addFavorite({{ team_id }}, '{{ team_info.team.name | e }}', '{{ team_info.team.logo | e }}')">
+                                    <i class="fas fa-star"></i> Přidat do oblíbených
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-star"></i> Přihlaste se
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <!-- Recent matches -->
+                {% if recent_matches %}
+                    <div class="card bg-darker border-secondary mb-4">
+                        <div class="card-header border-secondary">
+                            <h5 class="mb-0"><i class="fas fa-list"></i> Poslední zápasy</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover mb-0">
+                                    <thead class="border-secondary">
+                                        <tr>
+                                            <th class="ps-3">Datum</th>
+                                            <th>Domácí</th>
+                                            <th class="text-center">Skóre</th>
+                                            <th>Hosté</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for match in recent_matches %}
+                                            {% set hg = match.goals.home | int %}
+                                            {% set ag = match.goals.away | int %}
+                                            {% set home_id = match.teams.home.id %}
+                                            {% set is_home = (home_id == team_id) %}
+                                            {% if (is_home and hg > ag) or (not is_home and ag > hg) %}
+                                                {% set result_class = 'text-success' %}
+                                                {% set result_badge = 'bg-success' %}
+                                                {% set result_label = 'V' %}
+                                            {% elif hg == ag %}
+                                                {% set result_class = 'text-warning' %}
+                                                {% set result_badge = 'bg-warning text-dark' %}
+                                                {% set result_label = 'R' %}
+                                            {% else %}
+                                                {% set result_class = 'text-danger' %}
+                                                {% set result_badge = 'bg-danger' %}
+                                                {% set result_label = 'P' %}
+                                            {% endif %}
+                                            <tr>
+                                                <td class="ps-3 text-muted small">
+                                                    {{ match.fixture.date[:10] }}
+                                                </td>
+                                                <td class="{{ 'fw-bold' if is_home else '' }}">
+                                                    {{ match.teams.home.name }}
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge {{ result_badge }} px-2">
+                                                        {{ hg }}&nbsp;–&nbsp;{{ ag }}
+                                                    </span>
+                                                </td>
+                                                <td class="{{ 'fw-bold' if not is_home else '' }}">
+                                                    {{ match.teams.away.name }}
+                                                </td>
+                                                <td class="text-end pe-3">
+                                                    <a href="{{ url_for('matches.detail', match_id=match.fixture.id) }}"
+                                                       class="btn btn-sm btn-outline-secondary">Detail</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card bg-darker border-secondary mb-4">
+                        <div class="card-body text-muted text-center py-4">
+                            <i class="fas fa-calendar-times fa-2x mb-2 d-block"></i>
+                            Žádné nedávné zápasy nenalezeny.
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Upcoming matches -->
+                {% if upcoming_matches %}
+                    <div class="card bg-darker border-secondary">
+                        <div class="card-header border-secondary">
+                            <h5 class="mb-0"><i class="fas fa-calendar"></i> Nadcházející zápasy</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% for match in upcoming_matches %}
+                                    <div class="list-group-item bg-darker border-secondary px-3 py-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>{{ match.teams.home.name }}</strong>
+                                                <span class="text-muted mx-2">vs</span>
+                                                <strong>{{ match.teams.away.name }}</strong>
+                                                <div class="text-muted small mt-1">
+                                                    <i class="fas fa-clock"></i>
+                                                    {{ match.fixture.date[:10] }}
+                                                    &nbsp;{{ match.fixture.date[11:16] }}
+                                                </div>
+                                            </div>
+                                            <a href="{{ url_for('matches.detail', match_id=match.fixture.id) }}"
+                                               class="btn btn-sm btn-outline-primary ms-2">Detail</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Team statistics -->
+        {% if team_stats %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card bg-darker border-secondary">
+                        <div class="card-header border-secondary">
+                            <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Sezónní statistiky</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3 mb-3">
+                                    <div class="display-6 text-success">{{ team_stats.goals.for.total or 0 }}</div>
+                                    <small class="text-muted">Vstřeleno gólů</small>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="display-6 text-danger">{{ team_stats.goals.against.total or 0 }}</div>
+                                    <small class="text-muted">Obdrženo gólů</small>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="display-6 text-info">{{ team_stats.fixtures.played.total or 0 }}</div>
+                                    <small class="text-muted">Odehraných zápasů</small>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="display-6 text-warning">{{ team_stats.biggest_win or 'N/A' }}</div>
+                                    <small class="text-muted">Největší výhra</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> Tým nebyl nalezen.
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function addFavorite(teamId, teamName, teamLogo) {
+    fetch(`/teams/${teamId}/favorite`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({team_name: teamName, team_logo: teamLogo})
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            location.reload();
+        } else {
+            alert(d.message);
+        }
+    })
+    .catch(e => alert('Chyba: ' + e));
+}
+
+function removeFavorite(teamId) {
+    fetch(`/teams/${teamId}/favorite`, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'}
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            location.reload();
+        } else {
+            alert(d.message);
+        }
+    })
+    .catch(e => alert('Chyba: ' + e));
+}
+</script>
+{% endblock %}
