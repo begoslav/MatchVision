@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from app.services import api_service
+from app.services.api_service import _current_season
 
 main_bp = Blueprint('main', __name__)
 
@@ -31,6 +32,6 @@ def leagues():
 @main_bp.route('/league/<int:league_id>')
 def league_standings(league_id):
     """View league standings"""
-    season = request.args.get('season', 2024, type=int)
+    season = request.args.get('season', _current_season(), type=int)
     standings = api_service.get_league_standings(league_id, season)
     return render_template('league_standings.html', standings=standings, league_id=league_id, season=season)

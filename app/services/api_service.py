@@ -7,6 +7,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+def _current_season() -> int:
+    """Return current football season year.
+    European seasons start in July/August, so:
+      - Jan–June 2026 → season 2025
+      - July–Dec 2026 → season 2026
+    """
+    today = datetime.date.today()
+    return today.year if today.month >= 7 else today.year - 1
+
 # TTL in seconds for each endpoint pattern
 CACHE_TTL = {
     '/fixtures/statistics': 300,    # 5 min (live) / effectively forever for FT
@@ -109,7 +118,7 @@ class APIFootballService:
         """Get team details"""
         response = self._make_request('/teams/statistics', params={
             'team': team_id,
-            'season': 2024
+            'season': _current_season()
         })
         
         if response and 'response' in response:
@@ -161,11 +170,9 @@ class APIFootballService:
         return []
     
     def get_team_matches(self, team_id: int, season: int = None, limit: int = 10) -> List[Dict]:
-        """Get team's recent finished matches using date range (free plan supports 2022-2024)"""
+        """Get team's recent finished matches."""
         today = datetime.date.today()
-        # Free plan max season is 2024; season 2024 ran Aug 2024 - May 2025
-        use_season = min(season or 2024, 2024)
-        # Search last 12 months within that season
+        use_season = season or _current_season()
         date_from = (today - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
         date_to = today.strftime('%Y-%m-%d')
         response = self._make_request('/fixtures', params={
@@ -187,10 +194,9 @@ class APIFootballService:
         today = datetime.date.today()
         date_to = (today + datetime.timedelta(days=60)).strftime('%Y-%m-%d')
         date_from = today.strftime('%Y-%m-%d')
-        # Try season 2024 first (free plan limit)
         response = self._make_request('/fixtures', params={
             'team': team_id,
-            'season': 2024,
+            'season': _current_season(),
             'from': date_from,
             'to': date_to,
             'status': 'NS'
@@ -201,17 +207,17 @@ class APIFootballService:
             return matches[:limit]
         return []
     
-    def compare_teams(self, team1_id: int, team2_id: int, season: int = 2024) -> Tuple[Optional[Dict], Optional[Dict]]:
+    def compare_teams(self, team1_id: int, team2_id: int, season: int = None) -> Tuple[Optional[Dict], Optional[Dict]]:
         """Get statistics for comparing two teams"""
         team1_stats = self.get_team_details(team1_id)
         team2_stats = self.get_team_details(team2_id)
         return team1_stats, team2_stats
     
-    def get_league_standings_with_info(self, league_id: int, season: int = 2024) -> Optional[Dict]:
+    def get_league_standings_with_info(self, league_id: int, season: int = None) -> Optional[Dict]:
         """Get league info (name, logo) together with standings for a specific league."""
         response = self._make_request('/standings', params={
             'league': league_id,
-            'season': season
+            'season': season or _current_season()
         })
         if response and 'response' in response and len(response['response']) > 0:
             data = response['response'][0]
