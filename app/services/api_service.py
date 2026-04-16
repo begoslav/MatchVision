@@ -296,17 +296,17 @@ class APIFootballService:
 
     def get_european_competitions(self) -> List[Dict]:
         """Get UEFA club competitions (Champions League, Europa League, Conference League)"""
-        response = self._make_request('/leagues', params={'type': 'cup'})
-        if response and 'response' in response:
-            european = [
-                l for l in response['response']
-                if l['league']['id'] in [2, 3, 848]
-            ]
-            # Sort by known order
-            order = {2: 0, 3: 1, 848: 2}
-            european.sort(key=lambda l: order.get(l['league']['id'], 99))
-            return european
-        return []
+        result = []
+        for lid, name, logo in [
+            (2,   'UEFA Champions League', 'https://media.api-sports.io/football/leagues/2.png'),
+            (3,   'UEFA Europa League',    'https://media.api-sports.io/football/leagues/3.png'),
+            (848, 'UEFA Conference League','https://media.api-sports.io/football/leagues/848.png'),
+        ]:
+            result.append({
+                'league': {'id': lid, 'name': name, 'logo': logo},
+                'country': {'name': 'Europe'}
+            })
+        return result
 
 # Create singleton instance
 api_service = APIFootballService()
