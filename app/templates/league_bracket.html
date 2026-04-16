@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ league_info.name if league_info else 'Pohár' }} - Pavouk - MatchVision{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <a href="{{ url_for('main.leagues') }}" class="btn btn-outline-secondary mb-4">
+        <i class="fas fa-arrow-left"></i> Zpět
+    </a>
+
+    <div class="d-flex align-items-center mb-4 gap-3">
+        {% if league_info and league_info.logo %}
+            <img src="{{ league_info.logo }}" alt="" style="max-width: 60px;">
+        {% endif %}
+        <div>
+            <h1 class="mb-0">{{ league_info.name if league_info else 'Pohár' }}</h1>
+            <small class="text-muted">Sezóna {{ season }}/{{ season + 1 }} &mdash; Vyřazovací fáze</small>
+        </div>
+    </div>
+
+    {% if bracket %}
+        <div class="bracket-wrapper overflow-auto pb-3">
+            <div class="d-flex gap-4 align-items-start" style="min-width: max-content;">
+                {% for round_name, fixtures in bracket.items() %}
+                    <div class="bracket-round" style="min-width: 280px;">
+                        <h6 class="text-center text-uppercase text-muted mb-3 fw-bold letter-spacing-1">
+                            {{ round_name }}
+                        </h6>
+                        <div class="d-flex flex-column gap-3">
+                            {# Group fixtures into ties (pairs of legs) #}
+                            {% set ns = namespace(i=0) %}
+                            {% for fixture in fixtures %}
+                                <a href="{{ url_for('matches.detail', match_id=fixture.fixture.id) }}"
+                                   class="card bg-darker border-secondary text-decoration-none text-light bracket-match">
+                                    <div class="card-body py-2 px-3">
+                                        {# Home team #}
+                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <img src="{{ fixture.teams.home.logo }}" alt="" style="width:22px;height:22px;object-fit:contain;">
+                                                <span class="small">{{ fixture.teams.home.name }}</span>
+                                            </div>
+                                            <span class="fw-bold small {% if fixture.teams.home.winner %}text-success{% elif fixture.teams.home.winner == false %}text-danger{% endif %}">
+                                                {% if fixture.fixture.status.short in ['FT','AET','PEN'] %}
+                                                    {{ fixture.goals.home if fixture.goals.home is not none else '-' }}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        {# Away team #}
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <img src="{{ fixture.teams.away.logo }}" alt="" style="width:22px;height:22px;object-fit:contain;">
+                                                <span class="small">{{ fixture.teams.away.name }}</span>
+                                            </div>
+                                            <span class="fw-bold small {% if fixture.teams.away.winner %}text-success{% elif fixture.teams.away.winner == false %}text-danger{% endif %}">
+                                                {% if fixture.fixture.status.short in ['FT','AET','PEN'] %}
+                                                    {{ fixture.goals.away if fixture.goals.away is not none else '-' }}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        {# Date #}
+                                        <div class="text-muted mt-1" style="font-size: 0.7rem;">
+                                            <i class="fas fa-calendar-alt me-1"></i>
+                                            {{ fixture.fixture.date[:10] if fixture.fixture.date else '?' }}
+                                            &nbsp;
+                                            <span class="badge bg-secondary" style="font-size:0.65rem;">
+                                                {{ fixture.fixture.status.short }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Pavouk pro tuto soutěž zatím není k dispozici nebo vyřazovací fáze ještě nezačala.
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.bracket-match {
+    transition: border-color 0.2s, transform 0.15s;
+}
+.bracket-match:hover {
+    border-color: #6c757d !important;
+    transform: translateY(-2px);
+}
+.letter-spacing-1 {
+    letter-spacing: 0.05rem;
+}
+</style>
+{% endblock %}

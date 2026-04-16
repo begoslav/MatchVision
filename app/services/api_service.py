@@ -213,6 +213,22 @@ class APIFootballService:
         team2_stats = self.get_team_details(team2_id)
         return team1_stats, team2_stats
     
+    def get_league_info(self, league_id: int, season: int = None) -> Optional[Dict]:
+        """Get basic league/cup info (name, logo, country) without standings."""
+        response = self._make_request('/leagues', params={
+            'id': league_id,
+            'season': season or _current_season()
+        })
+        if response and 'response' in response and response['response']:
+            item = response['response'][0]
+            return {
+                'id': item['league']['id'],
+                'name': item['league']['name'],
+                'logo': item['league']['logo'],
+                'country': item.get('country', {}).get('name', 'Europe'),
+            }
+        return None
+
     def get_league_standings_with_info(self, league_id: int, season: int = None) -> Optional[Dict]:
         """Get league info (name, logo) together with standings for a specific league."""
         response = self._make_request('/standings', params={
@@ -231,7 +247,42 @@ class APIFootballService:
                 }
         return None
 
-    def get_top_leagues(self) -> List[Dict]:
+    def get_league_rounds(self, league_id: int, season: int = None) -> List[str]:
+        """Get all rounds for a league/cup."""
+        response = self._make_request('/fixtures/rounds', params={
+            'league': league_id,
+            'season': season or _current_season()
+        })
+        if response and 'response' in response:
+            return response['response']
+        return []
+
+    def get_fixtures_by_round(self, league_id: int, round_name: str, season: int = None) -> List[Dict]:
+        """Get all fixtures for a specific round."""
+        response = self._make_request('/fixtures', params={
+            'league': league_id,
+            'season': season or _current_season(),
+            'round': round_name
+        })
+        if response and 'response' in response:
+            return response['response']
+        return []
+
+    def get_knockout_bracket(self, league_id: int, season: int = None) -> Dict:
+        """Get knockout stage rounds and their fixtures for a cup competition."""
+        # Rounds considered knockout (filter out group stages)
+        knockout_keywords = ['round of', 'quarter', 'semi', 'final', '16', '32', '64']
+        all_rounds = self.get_league_rounds(league_id, season)
+        knockout_rounds = [
+            r for r in all_rounds
+            if any(kw in r.lower() for kw in knockout_keywords)
+        ]
+        result = {}
+        for round_name in knockout_rounds:
+            fixtures = self.get_fixtures_by_round(league_id, round_name, season)
+            if fixtures:
+                result[round_name] = fixtures
+        return result
         """Get top domestic football leagues"""
         response = self._make_request('/leagues', params={'type': 'league'})
         

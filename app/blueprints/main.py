@@ -32,7 +32,18 @@ def leagues():
 
 @main_bp.route('/league/<int:league_id>')
 def league_standings(league_id):
-    """View league standings"""
+    """View league standings or knockout bracket depending on competition type."""
     season = request.args.get('season', _current_season(), type=int)
+    # European cup IDs: Champions League (2), Europa League (3), Conference League (848)
+    european_cup_ids = {2, 3, 848}
+    if league_id in european_cup_ids:
+        bracket = api_service.get_knockout_bracket(league_id, season)
+        league_info = api_service.get_league_standings_with_info(league_id, season) \
+                      or api_service.get_league_info(league_id, season)
+        return render_template('league_bracket.html',
+                               bracket=bracket,
+                               league_id=league_id,
+                               season=season,
+                               league_info=league_info)
     standings = api_service.get_league_standings(league_id, season)
     return render_template('league_standings.html', standings=standings, league_id=league_id, season=season)
