@@ -74,7 +74,7 @@
                             {% for s in away_stats_list %}{% if away.update({s.type: s.value}) %}{% endif %}{% endfor %}
 
                             {% set stat_rows = [
-                                ('Střely celkem', 'Shots Total'),
+                                ('Střely celkem', 'Total Shots'),
                                 ('Střely na branku', 'Shots on Goal'),
                                 ('Držení míče', 'Ball Possession'),
                                 ('Přihrávky', 'Total Passes'),
