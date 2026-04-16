@@ -294,8 +294,18 @@ class APIFootballService:
             return major_leagues[:10]
         return []
 
+    def get_top_leagues(self) -> List[Dict]:
+        """Get top domestic football leagues"""
+        response = self._make_request('/leagues', params={'type': 'league'})
+        if response and 'response' in response:
+            major_leagues = [
+                l for l in response['response']
+                if l['league']['id'] in [39, 140, 78, 61, 71, 88, 94, 179, 207, 218]
+            ]
+            return major_leagues[:10]
+        return []
+
     def get_european_competitions(self) -> List[Dict]:
-        """Get UEFA club competitions (Champions League, Europa League, Conference League)"""
         result = []
         for lid, name, logo in [
             (2,   'UEFA Champions League', 'https://media.api-sports.io/football/leagues/2.png'),
