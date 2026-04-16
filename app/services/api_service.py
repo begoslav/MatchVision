@@ -113,6 +113,24 @@ class APIFootballService:
             if 'league' in standings and 'standings' in standings['league']:
                 return standings['league']['standings'][0] if standings['league']['standings'] else []
         return []
+
+    def get_all_standings_groups(self, league_id: int, season: int) -> List[Dict]:
+        """Get all standing groups (for cups with multiple groups like CL).
+        Returns list of {'name': str, 'standings': List[Dict]}
+        """
+        response = self._make_request('/standings', params={
+            'league': league_id,
+            'season': season
+        })
+        if response and 'response' in response and response['response']:
+            data = response['response'][0]
+            if 'league' in data and 'standings' in data['league']:
+                groups = []
+                for i, group in enumerate(data['league']['standings']):
+                    name = group[0].get('group', f'Skupina {i+1}') if group else f'Skupina {i+1}'
+                    groups.append({'name': name, 'standings': group})
+                return groups
+        return []
     
     def get_team_details(self, team_id: int) -> Optional[Dict]:
         """Get team details"""
