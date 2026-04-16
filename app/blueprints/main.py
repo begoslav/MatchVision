@@ -27,7 +27,8 @@ def live_matches():
 def leagues():
     """View leagues"""
     leagues_data = api_service.get_top_leagues()
-    return render_template('leagues.html', leagues=leagues_data)
+    european_data = api_service.get_european_competitions()
+    return render_template('leagues.html', leagues=leagues_data, european=european_data)
 
 @main_bp.route('/league/<int:league_id>')
 def league_standings(league_id):

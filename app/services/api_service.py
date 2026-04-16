@@ -232,16 +232,29 @@ class APIFootballService:
         return None
 
     def get_top_leagues(self) -> List[Dict]:
-        """Get top football leagues"""
+        """Get top domestic football leagues"""
         response = self._make_request('/leagues', params={'type': 'league'})
         
         if response and 'response' in response:
-            # Filter for major leagues
             major_leagues = [
                 l for l in response['response']
                 if l['league']['id'] in [39, 140, 78, 61, 71, 88, 94, 179, 207, 218]
             ]
             return major_leagues[:10]
+        return []
+
+    def get_european_competitions(self) -> List[Dict]:
+        """Get UEFA club competitions (Champions League, Europa League, Conference League)"""
+        response = self._make_request('/leagues', params={'type': 'cup'})
+        if response and 'response' in response:
+            european = [
+                l for l in response['response']
+                if l['league']['id'] in [2, 3, 848]
+            ]
+            # Sort by known order
+            order = {2: 0, 3: 1, 848: 2}
+            european.sort(key=lambda l: order.get(l['league']['id'], 99))
+            return european
         return []
 
 # Create singleton instance
