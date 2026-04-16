@@ -33,8 +33,11 @@ def create_app(config_name=None):
     app.register_blueprint(matches_bp)
     app.register_blueprint(favorites_bp)
     
-    # Create database tables
+    # Create database tables (skip on failure – e.g. no DB connection at build time)
     with app.app_context():
-        db.create_all()
-    
+        try:
+            db.create_all()
+        except Exception as e:
+            app.logger.warning(f"db.create_all() skipped: {e}")
+
     return app
