@@ -313,14 +313,14 @@ class APIFootballService:
         return []
 
     def get_top_leagues(self) -> List[Dict]:
-        """Get top domestic football leagues"""
+        """Get top domestic football leagues including Czech liga"""
         response = self._make_request('/leagues', params={'type': 'league'})
         if response and 'response' in response:
-            major_leagues = [
-                l for l in response['response']
-                if l['league']['id'] in [39, 140, 78, 61, 71, 88, 94, 179, 207, 218]
-            ]
-            return major_leagues[:10]
+            # Top 11 world leagues + Czech liga (345)
+            priority_ids = [39, 140, 78, 135, 61, 88, 94, 71, 179, 203, 144, 345]
+            leagues_by_id = {l['league']['id']: l for l in response['response']}
+            result = [leagues_by_id[lid] for lid in priority_ids if lid in leagues_by_id]
+            return result
         return []
 
     def get_european_competitions(self) -> List[Dict]:
