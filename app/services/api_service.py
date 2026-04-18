@@ -166,7 +166,14 @@ class APIFootballService:
             match['statistics'] = stats_response['response']
         else:
             match['statistics'] = []
-        
+
+        # Fetch events (goals, cards, substitutions)
+        events_response = self._make_request('/fixtures/events', params={'fixture': match_id})
+        if events_response and 'response' in events_response:
+            match['events'] = events_response['response']
+        else:
+            match['events'] = []
+
         return match
     
     def get_match_lineups(self, match_id: int) -> List[Dict]:

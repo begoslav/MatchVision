@@ -130,6 +130,16 @@
                     </div>
                     <div class="card-body">
                         {% if lineups and lineups | length >= 2 %}
+                            {# Build set of player IDs who received a red card #}
+                            {% set red_card_ids = [] %}
+                            {% if match_data.events %}
+                                {% for ev in match_data.events %}
+                                    {% if ev.type == 'Card' and ev.detail in ['Red Card', 'Second Yellow card'] and ev.player.id %}
+                                        {% if red_card_ids.append(ev.player.id) %}{% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+
                             {% set home_lineup = lineups[0] %}
                             {% set away_lineup = lineups[1] %}
                             <div class="row">
@@ -150,6 +160,7 @@
                                                 <span>
                                                     <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                     {{ p.name }}
+                                                    {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                 </span>
                                                 <span class="badge bg-secondary">{{ p.pos or '' }}</span>
                                             </li>
@@ -164,6 +175,7 @@
                                                     <span class="text-muted">
                                                         <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                         {{ p.name }}
+                                                        {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                     </span>
                                                     <span class="badge bg-dark text-muted">{{ p.pos or '' }}</span>
                                                 </li>
@@ -188,6 +200,7 @@
                                                 <span>
                                                     <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                     {{ p.name }}
+                                                    {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                 </span>
                                                 <span class="badge bg-secondary">{{ p.pos or '' }}</span>
                                             </li>
@@ -202,6 +215,7 @@
                                                     <span class="text-muted">
                                                         <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                         {{ p.name }}
+                                                        {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                     </span>
                                                     <span class="badge bg-dark text-muted">{{ p.pos or '' }}</span>
                                                 </li>
