@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if player_data %}{{ player_data.player.name }} - MatchVision{% else %}Profil hráče - MatchVision{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    {% if not player_data %}
+        <div class="text-center text-muted py-5">
+            <i class="fas fa-user-slash fa-3x mb-3 d-block"></i>
+            <h4>Profil hráče není k dispozici</h4>
+            <p>Data pro tohoto hráče se nepodařilo načíst.</p>
+            <a href="javascript:history.back()" class="btn btn-outline-secondary mt-2">
+                <i class="fas fa-arrow-left me-1"></i> Zpět
+            </a>
+        </div>
+    {% else %}
+        {% set player = player_data.player %}
+        {% set stats_list = player_data.statistics %}
+        {# Hlavní statistika – první záznam (nejvyšší soutěž) #}
+        {% set s = stats_list[0] if stats_list else {} %}
+        {% set games   = s.get('games', {})   if s else {} %}
+        {% set goals   = s.get('goals', {})   if s else {} %}
+        {% set shots   = s.get('shots', {})   if s else {} %}
+        {% set passes  = s.get('passes', {})  if s else {} %}
+        {% set tackles = s.get('tackles', {}) if s else {} %}
+        {% set dribbles= s.get('dribbles', {})if s else {} %}
+        {% set cards   = s.get('cards', {})   if s else {} %}
+        {% set duels   = s.get('duels', {})   if s else {} %}
+
+        <a href="javascript:history.back()" class="btn btn-outline-secondary mb-4">
+            <i class="fas fa-arrow-left me-1"></i> Zpět
+        </a>
+
+        <!-- Hlavička profilu -->
+        <div class="card bg-dark border-secondary mb-4">
+            <div class="card-body">
+                <div class="row align-items-center g-4">
+                    <div class="col-auto">
+                        {% if player.photo %}
+                            <img src="{{ player.photo }}" alt="{{ player.name }}"
+                                 class="rounded-circle border border-secondary"
+                                 style="width:110px;height:110px;object-fit:cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                                 style="width:110px;height:110px;">
+                                <i class="fas fa-user fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col">
+                        <h2 class="mb-1">{{ player.name }}</h2>
+                        <div class="d-flex flex-wrap gap-3 text-muted small mt-2">
+                            {% if player.nationality %}
+                                <span><i class="fas fa-flag me-1"></i>{{ player.nationality }}</span>
+                            {% endif %}
+                            {% if player.age %}
+                                <span><i class="fas fa-birthday-cake me-1"></i>{{ player.age }} let</span>
+                            {% endif %}
+                            {% if player.height %}
+                                <span><i class="fas fa-ruler-vertical me-1"></i>{{ player.height }}</span>
+                            {% endif %}
+                            {% if player.weight %}
+                                <span><i class="fas fa-weight me-1"></i>{{ player.weight }}</span>
+                            {% endif %}
+                            {% if s and s.team %}
+                                <span>
+                                    <img src="{{ s.team.logo }}" style="height:18px;" class="me-1">
+                                    {{ s.team.name }}
+                                </span>
+                            {% endif %}
+                            {% if s and s.league %}
+                                <span>
+                                    <img src="{{ s.league.logo }}" style="height:18px;" class="me-1">
+                                    {{ s.league.name }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if games.rating %}
+                        {% set r = games.rating | float %}
+                        {% set r_cls = 'success' if r >= 7.5 else ('warning' if r >= 6.0 else 'danger') %}
+                        <div class="col-auto text-center">
+                            <div class="badge bg-{{ r_cls }} fs-4 px-3 py-2">{{ '%.2f'|format(r) }}</div>
+                            <div class="text-muted small mt-1">Průměrný rating</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiky sezony -->
+        <div class="card bg-dark border-secondary mb-4">
+            <div class="card-header border-secondary">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2 text-primary"></i>Statistiky sezony</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 text-center">
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="display-6 fw-bold text-primary">{{ games.appearences or 0 }}</div>
+                            <div class="text-muted small">Zápasy</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="display-6 fw-bold text-success">{{ goals.total or 0 }}</div>
+                            <div class="text-muted small">Góly</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="display-6 fw-bold text-info">{{ goals.assists or 0 }}</div>
+                            <div class="text-muted small">Asistence</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="display-6 fw-bold text-warning">{{ games.minutes or 0 }}</div>
+                            <div class="text-muted small">Minuty</div>
+                        </div>
+                    </div>
+
+                    {% if shots.total is not none and shots.total != '' %}
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="fs-4 fw-bold">{{ shots.total or 0 }}</div>
+                            <div class="text-muted small">Střely</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if shots.on is not none and shots.on != '' %}
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="fs-4 fw-bold">{{ shots.on or 0 }}</div>
+                            <div class="text-muted small">Střely na branku</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if passes.key is not none and passes.key != '' %}
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="fs-4 fw-bold">{{ passes.key or 0 }}</div>
+                            <div class="text-muted small">Klíčové přihrávky</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if passes.accuracy is not none and passes.accuracy != '' %}
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="fs-4 fw-bold">{{ passes.accuracy or 0 }}%</div>
+                            <div class="text-muted small">Přesnost přihrávek</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if tackles.total is not none and tackles.total != '' %}
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="fs-4 fw-bold">{{ tackles.total or 0 }}</div>
+                            <div class="text-muted small">Souboje (úspěšné)</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if dribbles.success is not none and dribbles.success != '' %}
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="fs-4 fw-bold">{{ dribbles.success or 0 }} / {{ dribbles.attempts or 0 }}</div>
+                            <div class="text-muted small">Driblinky (úsp./pok.)</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="fs-4 fw-bold text-warning">{{ cards.yellow or 0 }}</div>
+                            <div class="text-muted small">Žluté karty</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-darker border-secondary h-100 p-3">
+                            <div class="fs-4 fw-bold text-danger">{{ cards.red or 0 }}</div>
+                            <div class="text-muted small">Červené karty</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistiky v dalších soutěžích -->
+                {% if stats_list | length > 1 %}
+                <hr class="border-secondary mt-4">
+                <h6 class="text-muted mb-3">Ostatní soutěže v sezoně</h6>
+                <div class="table-responsive">
+                    <table class="table table-dark table-sm table-hover align-middle">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Liga</th>
+                                <th>Tým</th>
+                                <th class="text-center">Zápasy</th>
+                                <th class="text-center">Góly</th>
+                                <th class="text-center">Asistence</th>
+                                <th class="text-center">Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for st in stats_list[1:] %}
+                            <tr>
+                                <td>
+                                    {% if st.league %}
+                                        <img src="{{ st.league.logo }}" style="height:16px;" class="me-1">
+                                        {{ st.league.name }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if st.team %}
+                                        <img src="{{ st.team.logo }}" style="height:16px;" class="me-1">
+                                        {{ st.team.name }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ st.games.appearences or 0 }}</td>
+                                <td class="text-center">{{ st.goals.total or 0 }}</td>
+                                <td class="text-center">{{ st.goals.assists or 0 }}</td>
+                                <td class="text-center">
+                                    {% if st.games.rating %}
+                                        {% set rr = st.games.rating | float %}
+                                        {% set rc = 'success' if rr >= 7.5 else ('warning' if rr >= 6.0 else 'danger') %}
+                                        <span class="badge bg-{{ rc }}">{{ '%.2f'|format(rr) }}</span>
+                                    {% else %}—{% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Poslední zápasy -->
+        {% if recent_fixtures %}
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h5 class="mb-0"><i class="fas fa-history me-2 text-primary"></i>Poslední zápasy</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Datum</th>
+                                <th>Liga</th>
+                                <th>Zápas</th>
+                                <th class="text-center">Výsledek</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in recent_fixtures %}
+                            {% set home = m.teams.home %}
+                            {% set away = m.teams.away %}
+                            {% set date_str = m.fixture.date[:10] if m.fixture.date else '' %}
+                            <tr>
+                                <td class="text-muted small">{{ date_str }}</td>
+                                <td>
+                                    {% if m.league %}
+                                        <img src="{{ m.league.logo }}" style="height:16px;" class="me-1">
+                                        <span class="small">{{ m.league.name }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <img src="{{ home.logo }}" style="height:20px;">
+                                        <span class="small">{{ home.name }}</span>
+                                        <span class="text-muted small">vs</span>
+                                        <span class="small">{{ away.name }}</span>
+                                        <img src="{{ away.logo }}" style="height:20px;">
+                                    </div>
+                                </td>
+                                <td class="text-center fw-bold">
+                                    {% if m.goals.home is not none %}
+                                        {{ m.goals.home }} : {{ m.goals.away }}
+                                    {% else %}—{% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('matches.detail', match_id=m.fixture.id) }}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    {% endif %}
+</div>
+{% endblock %}

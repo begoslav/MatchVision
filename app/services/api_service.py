@@ -358,5 +358,36 @@ class APIFootballService:
             })
         return result
 
+    def get_player_profile(self, player_id: int, season: int = None) -> Optional[Dict]:
+        """Get player info and season statistics."""
+        use_season = season or _current_season()
+        response = self._make_request('/players', params={'id': player_id, 'season': use_season})
+        if response and response.get('response'):
+            return response['response'][0]
+        # Try previous season as fallback
+        response = self._make_request('/players', params={'id': player_id, 'season': use_season - 1})
+        if response and response.get('response'):
+            return response['response'][0]
+        return None
+
+    def get_player_recent_fixtures(self, player_id: int, season: int = None, limit: int = 8) -> List[Dict]:
+        """Get recent finished fixtures for a player."""
+        use_season = season or _current_season()
+        today = datetime.date.today()
+        date_from = (today - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
+        date_to = today.strftime('%Y-%m-%d')
+        response = self._make_request('/fixtures', params={
+            'player': player_id,
+            'season': use_season,
+            'from': date_from,
+            'to': date_to,
+            'status': 'FT',
+        })
+        if response and response.get('response'):
+            matches = response['response']
+            matches.sort(key=lambda m: m['fixture']['date'], reverse=True)
+            return matches[:limit]
+        return []
+
 # Create singleton instance
 api_service = APIFootballService()

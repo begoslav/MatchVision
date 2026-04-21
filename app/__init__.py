@@ -2,7 +2,7 @@ from flask import Flask
 from flask_login import LoginManager
 from app.config import get_config
 from app.models import db, User
-from app.blueprints import auth_bp, main_bp, teams_bp, matches_bp, favorites_bp
+from app.blueprints import auth_bp, main_bp, teams_bp, matches_bp, favorites_bp, players_bp
 
 def create_app(config_name=None):
     """Application factory"""
@@ -32,6 +32,7 @@ def create_app(config_name=None):
     app.register_blueprint(teams_bp)
     app.register_blueprint(matches_bp)
     app.register_blueprint(favorites_bp)
+    app.register_blueprint(players_bp)
     
     # Create database tables (skip on failure – e.g. no DB connection at build time)
     with app.app_context():
