@@ -496,3 +496,83 @@ body.light-mode hr {
     border-color: var(--border-color) !important;
     opacity: 1;
 }
+
+@media (min-width: 768px) {
+    .border-md-end { border-right: 1px solid var(--border-color) !important; }
+}
+
+/* =====================
+   Match header (score)
+   ===================== */
+.match-header-row {
+    flex-wrap: nowrap;
+}
+
+.match-team-logo {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+.match-score-number {
+    font-size: 2.8rem;
+    font-weight: 800;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.match-team-name {
+    font-size: 1rem;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+@media (max-width: 480px) {
+    .match-team-logo     { width: 48px; height: 48px; }
+    .match-score-number  { font-size: 2rem; }
+    .match-team-name     { font-size: 0.8rem; }
+}
+
+/* =====================
+   Global mobile fixes
+   ===================== */
+@media (max-width: 768px) {
+    /* tighter container padding */
+    .container, .container-fluid {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    /* cards: less inner padding */
+    .card-body { padding: 0.85rem !important; }
+    .card-header { padding: 0.6rem 0.85rem !important; }
+
+    /* headings */
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.35rem; }
+    h4, h5 { font-size: 1rem; }
+
+    /* tables: allow horizontal scroll */
+    .table-responsive-always {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* stat bars label – wrap on small screens */
+    .stat-label { font-size: 0.72rem; }
+
+    /* lineup columns – stack on mobile */
+    .lineup-col { border: none !important; margin-bottom: 1rem; }
+
+    /* player profile stats grid – 2 per row on mobile */
+    .player-stat-grid .col-6 { flex: 0 0 50%; max-width: 50%; }
+
+    /* badge font-size on mobile */
+    .badge { font-size: 0.7rem; }
+
+    /* button spacing */
+    .btn-sm { padding: 0.25rem 0.55rem; font-size: 0.78rem; }
+}

@@ -20,28 +20,36 @@
                     <div class="card-body">
                         <div class="text-muted small mb-3">
                             <span class="badge bg-primary">{{ match_data.league.name }}</span>
-                            <span class="badge bg-info ms-2">{{ match_data.fixture.status.short }}</span>
                         </div>
 
-                        <div class="row align-items-center text-center py-4">
-                            <div class="col-md-5 text-end">
-                                <img src="{{ match_data.teams.home.logo or 'https://via.placeholder.com/80' }}" 
-                                     alt="{{ match_data.teams.home.name }}" class="img-fluid" style="max-width: 80px;">
-                                <h4 class="mt-3 mb-0">{{ match_data.teams.home.name }}</h4>
-                                <a href="{{ url_for('teams.detail', team_id=match_data.teams.home.id) }}" 
-                                   class="btn btn-sm btn-outline-primary mt-2">Tým</a>
+                        <!-- Score header – mobile friendly -->
+                        <div class="d-flex align-items-center justify-content-between py-3 gap-2 match-header-row">
+                            <!-- Home team -->
+                            <div class="text-center flex-fill">
+                                <img src="{{ match_data.teams.home.logo or 'https://via.placeholder.com/80' }}"
+                                     alt="{{ match_data.teams.home.name }}"
+                                     class="match-team-logo mb-2">
+                                <div class="fw-bold match-team-name">{{ match_data.teams.home.name }}</div>
+                                <a href="{{ url_for('teams.detail', team_id=match_data.teams.home.id) }}"
+                                   class="btn btn-sm btn-outline-primary mt-1">Tým</a>
                             </div>
-                            <div class="col-md-2">
-                                <div class="display-3 fw-bold">{{ match_data.goals.home or 0 }}</div>
-                                <small class="text-muted">-</small>
-                                <div class="display-3 fw-bold">{{ match_data.goals.away or 0 }}</div>
+                            <!-- Score -->
+                            <div class="text-center px-2 match-score-block">
+                                <div class="match-score-number">
+                                    {{ match_data.goals.home if match_data.goals.home is not none else '-' }}
+                                    <span class="text-muted mx-1">:</span>
+                                    {{ match_data.goals.away if match_data.goals.away is not none else '-' }}
+                                </div>
+                                <div class="badge bg-info mt-1">{{ match_data.fixture.status.short }}</div>
                             </div>
-                            <div class="col-md-5 text-start">
-                                <img src="{{ match_data.teams.away.logo or 'https://via.placeholder.com/80' }}" 
-                                     alt="{{ match_data.teams.away.name }}" class="img-fluid" style="max-width: 80px;">
-                                <h4 class="mt-3 mb-0">{{ match_data.teams.away.name }}</h4>
-                                <a href="{{ url_for('teams.detail', team_id=match_data.teams.away.id) }}" 
-                                   class="btn btn-sm btn-outline-primary mt-2">Tým</a>
+                            <!-- Away team -->
+                            <div class="text-center flex-fill">
+                                <img src="{{ match_data.teams.away.logo or 'https://via.placeholder.com/80' }}"
+                                     alt="{{ match_data.teams.away.name }}"
+                                     class="match-team-logo mb-2">
+                                <div class="fw-bold match-team-name">{{ match_data.teams.away.name }}</div>
+                                <a href="{{ url_for('teams.detail', team_id=match_data.teams.away.id) }}"
+                                   class="btn btn-sm btn-outline-primary mt-1">Tým</a>
                             </div>
                         </div>
                     </div>
@@ -150,9 +158,9 @@
 
                             {% set home_lineup = lineups[0] %}
                             {% set away_lineup = lineups[1] %}
-                            <div class="row">
+                            <div class="row g-0">
                                 <!-- Home team -->
-                                <div class="col-md-6 border-end border-secondary">
+                                <div class="col-12 col-md-6 lineup-col border-md-end border-secondary pb-3 pb-md-0 mb-3 mb-md-0">
                                     <div class="text-center mb-3">
                                         <img src="{{ match_data.teams.home.logo }}" style="height:32px;" class="me-2">
                                         <strong>{{ home_lineup.team.name }}</strong>
@@ -208,7 +216,7 @@
                                     {% endif %}
                                 </div>
                                 <!-- Away team -->
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6 lineup-col">
                                     <div class="text-center mb-3">
                                         <img src="{{ match_data.teams.away.logo }}" style="height:32px;" class="me-2">
                                         <strong>{{ away_lineup.team.name }}</strong>
