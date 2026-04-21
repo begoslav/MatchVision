@@ -497,6 +497,15 @@ body.light-mode hr {
     opacity: 1;
 }
 
+/* Player link in lineups – readable in both light and dark mode */
+.player-link {
+    color: var(--text-main);
+}
+.player-link:hover {
+    color: var(--accent-primary, #0d6efd);
+    text-decoration: underline !important;
+}
+
 @media (min-width: 768px) {
     .border-md-end { border-right: 1px solid var(--border-color) !important; }
 }

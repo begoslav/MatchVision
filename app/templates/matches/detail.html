@@ -178,7 +178,7 @@
                                             <li class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary">
                                                 <span>
                                                     <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
-                                                    <a href="{{ url_for('players.profile', player_id=p.id) }}" class="text-decoration-none text-white">{{ p.name }}</a>
+                                                    <a href="{{ url_for('players.profile', player_id=p.id) }}" class="text-decoration-none player-link">{{ p.name }}</a>
                                                     {% for _ in range(goal_scorer_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Gól">⚽</span>{% endfor %}
                                                     {% for _ in range(assist_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Asistence">🅰️</span>{% endfor %}
                                                     {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
@@ -201,7 +201,7 @@
                                                 <li class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary">
                                                     <span class="text-muted">
                                                         <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
-                                                        <a href="{{ url_for('players.profile', player_id=p.id) }}" class="text-decoration-none text-white">{{ p.name }}</a>
+                                                        <a href="{{ url_for('players.profile', player_id=p.id) }}" class="text-decoration-none player-link">{{ p.name }}</a>
                                                         {% for _ in range(goal_scorer_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Gól">⚽</span>{% endfor %}
                                                         {% for _ in range(assist_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Asistence">🅰️</span>{% endfor %}
                                                         {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
@@ -234,7 +234,7 @@
                                             <li class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary">
                                                 <span>
                                                     <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
-                                                    <a href="{{ url_for('players.profile', player_id=p.id) }}" class="text-decoration-none text-white">{{ p.name }}</a>
+                                                    <a href="{{ url_for('players.profile', player_id=p.id) }}" class="text-decoration-none player-link">{{ p.name }}</a>
                                                     {% for _ in range(goal_scorer_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Gól">⚽</span>{% endfor %}
                                                     {% for _ in range(assist_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Asistence">🅰️</span>{% endfor %}
                                                     {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
@@ -257,7 +257,7 @@
                                                 <li class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary">
                                                     <span class="text-muted">
                                                         <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
-                                                        <a href="{{ url_for('players.profile', player_id=p.id) }}" class="text-decoration-none text-white">{{ p.name }}</a>
+                                                        <a href="{{ url_for('players.profile', player_id=p.id) }}" class="text-decoration-none player-link">{{ p.name }}</a>
                                                         {% for _ in range(goal_scorer_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Gól">⚽</span>{% endfor %}
                                                         {% for _ in range(assist_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Asistence">🅰️</span>{% endfor %}
                                                         {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
