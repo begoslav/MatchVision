@@ -130,12 +130,20 @@
                     </div>
                     <div class="card-body">
                         {% if lineups and lineups | length >= 2 %}
-                            {# Build set of player IDs who received a red card #}
+                            {# Build lists of player IDs for red cards, goals and assists #}
                             {% set red_card_ids = [] %}
+                            {% set goal_scorer_ids = [] %}
+                            {% set assist_ids = [] %}
                             {% if match_data.events %}
                                 {% for ev in match_data.events %}
                                     {% if ev.type == 'Card' and ev.detail in ['Red Card', 'Second Yellow card'] and ev.player.id %}
                                         {% if red_card_ids.append(ev.player.id) %}{% endif %}
+                                    {% endif %}
+                                    {% if ev.type == 'Goal' and ev.detail != 'Missed Penalty' and ev.player and ev.player.id %}
+                                        {% if goal_scorer_ids.append(ev.player.id) %}{% endif %}
+                                    {% endif %}
+                                    {% if ev.type == 'Goal' and ev.detail != 'Missed Penalty' and ev.assist and ev.assist.id %}
+                                        {% if assist_ids.append(ev.assist.id) %}{% endif %}
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}
@@ -163,6 +171,8 @@
                                                 <span>
                                                     <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                     {{ p.name }}
+                                                    {% for _ in range(goal_scorer_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Gól">⚽</span>{% endfor %}
+                                                    {% for _ in range(assist_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Asistence">🅰️</span>{% endfor %}
                                                     {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                 </span>
                                                 <span class="d-flex align-items-center gap-2">
@@ -184,6 +194,8 @@
                                                     <span class="text-muted">
                                                         <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                         {{ p.name }}
+                                                        {% for _ in range(goal_scorer_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Gól">⚽</span>{% endfor %}
+                                                        {% for _ in range(assist_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Asistence">🅰️</span>{% endfor %}
                                                         {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                     </span>
                                                     <span class="d-flex align-items-center gap-2">
@@ -215,6 +227,8 @@
                                                 <span>
                                                     <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                     {{ p.name }}
+                                                    {% for _ in range(goal_scorer_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Gól">⚽</span>{% endfor %}
+                                                    {% for _ in range(assist_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Asistence">🅰️</span>{% endfor %}
                                                     {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                 </span>
                                                 <span class="d-flex align-items-center gap-2">
@@ -236,6 +250,8 @@
                                                     <span class="text-muted">
                                                         <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                         {{ p.name }}
+                                                        {% for _ in range(goal_scorer_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Gól">⚽</span>{% endfor %}
+                                                        {% for _ in range(assist_ids | select('equalto', p.id) | list | length) %}<span class="ms-1" title="Asistence">🅰️</span>{% endfor %}
                                                         {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                     </span>
                                                     <span class="d-flex align-items-center gap-2">
