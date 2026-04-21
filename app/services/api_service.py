@@ -176,6 +176,21 @@ class APIFootballService:
 
         return match
     
+    def get_match_player_ratings(self, match_id: int) -> Dict[int, str]:
+        """Get player ratings for a match. Returns dict {player_id: rating_str}."""
+        response = self._make_request('/fixtures/players', params={'fixture': match_id})
+        ratings = {}
+        if response and 'response' in response:
+            for team_data in response['response']:
+                for player_entry in team_data.get('players', []):
+                    pid = player_entry['player']['id']
+                    stats = player_entry.get('statistics', [])
+                    if stats:
+                        rating = stats[0].get('games', {}).get('rating')
+                        if rating:
+                            ratings[pid] = rating
+        return ratings
+
     def get_match_lineups(self, match_id: int) -> List[Dict]:
         """Get team lineups for a match"""
         response = self._make_request('/fixtures/lineups', params={'fixture': match_id})

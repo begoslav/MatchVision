@@ -18,9 +18,10 @@ def detail(match_id):
         return render_template('matches/detail.html', match_data=None, summary=None, lineups=[]), 404
     
     lineups = api_service.get_match_lineups(match_id)
+    ratings = api_service.get_match_player_ratings(match_id)
     summary = summary_service.generate_match_summary(match_data)
     
-    return render_template('matches/detail.html', match_data=match_data, summary=summary, lineups=lineups)
+    return render_template('matches/detail.html', match_data=match_data, summary=summary, lineups=lineups, ratings=ratings)
 
 @matches_bp.route('/<int:match_id>/summary')
 def get_summary(match_id):

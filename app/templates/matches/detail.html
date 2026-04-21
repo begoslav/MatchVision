@@ -156,13 +156,19 @@
                                     <ul class="list-unstyled mb-3">
                                         {% for entry in home_lineup.startXI %}
                                             {% set p = entry.player %}
-                                            <li class="d-flex justify-content-between py-1 border-bottom border-secondary">
+                                            {% set r = ratings.get(p.id) %}
+                                            {% set r_num = r | float(default=0) %}
+                                            {% set r_cls = 'success' if r_num >= 7.5 else ('warning' if r_num >= 6.0 else 'danger') %}
+                                            <li class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary">
                                                 <span>
                                                     <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                     {{ p.name }}
                                                     {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                 </span>
-                                                <span class="badge bg-secondary">{{ p.pos or '' }}</span>
+                                                <span class="d-flex align-items-center gap-2">
+                                                    {% if r %}<span class="badge bg-{{ r_cls }}" title="Rating">{{ '%.1f'|format(r_num) }}</span>{% endif %}
+                                                    <span class="badge bg-secondary">{{ p.pos or '' }}</span>
+                                                </span>
                                             </li>
                                         {% endfor %}
                                     </ul>
@@ -171,13 +177,19 @@
                                         <ul class="list-unstyled">
                                             {% for entry in home_lineup.substitutes %}
                                                 {% set p = entry.player %}
-                                                <li class="d-flex justify-content-between py-1 border-bottom border-secondary">
+                                                {% set r = ratings.get(p.id) %}
+                                                {% set r_num = r | float(default=0) %}
+                                                {% set r_cls = 'success' if r_num >= 7.5 else ('warning' if r_num >= 6.0 else 'danger') %}
+                                                <li class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary">
                                                     <span class="text-muted">
                                                         <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                         {{ p.name }}
                                                         {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                     </span>
-                                                    <span class="badge bg-dark text-muted">{{ p.pos or '' }}</span>
+                                                    <span class="d-flex align-items-center gap-2">
+                                                        {% if r %}<span class="badge bg-{{ r_cls }}" title="Rating">{{ '%.1f'|format(r_num) }}</span>{% endif %}
+                                                        <span class="badge bg-dark text-muted">{{ p.pos or '' }}</span>
+                                                    </span>
                                                 </li>
                                             {% endfor %}
                                         </ul>
@@ -196,13 +208,19 @@
                                     <ul class="list-unstyled mb-3">
                                         {% for entry in away_lineup.startXI %}
                                             {% set p = entry.player %}
-                                            <li class="d-flex justify-content-between py-1 border-bottom border-secondary">
+                                            {% set r = ratings.get(p.id) %}
+                                            {% set r_num = r | float(default=0) %}
+                                            {% set r_cls = 'success' if r_num >= 7.5 else ('warning' if r_num >= 6.0 else 'danger') %}
+                                            <li class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary">
                                                 <span>
                                                     <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                     {{ p.name }}
                                                     {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                 </span>
-                                                <span class="badge bg-secondary">{{ p.pos or '' }}</span>
+                                                <span class="d-flex align-items-center gap-2">
+                                                    {% if r %}<span class="badge bg-{{ r_cls }}" title="Rating">{{ '%.1f'|format(r_num) }}</span>{% endif %}
+                                                    <span class="badge bg-secondary">{{ p.pos or '' }}</span>
+                                                </span>
                                             </li>
                                         {% endfor %}
                                     </ul>
@@ -211,13 +229,19 @@
                                         <ul class="list-unstyled">
                                             {% for entry in away_lineup.substitutes %}
                                                 {% set p = entry.player %}
-                                                <li class="d-flex justify-content-between py-1 border-bottom border-secondary">
+                                                {% set r = ratings.get(p.id) %}
+                                                {% set r_num = r | float(default=0) %}
+                                                {% set r_cls = 'success' if r_num >= 7.5 else ('warning' if r_num >= 6.0 else 'danger') %}
+                                                <li class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary">
                                                     <span class="text-muted">
                                                         <span class="badge bg-dark text-muted me-2" style="min-width:24px;">{{ p.number }}</span>
                                                         {{ p.name }}
                                                         {% if p.id in red_card_ids %}<span class="ms-1" title="Červená karta">🟥</span>{% endif %}
                                                     </span>
-                                                    <span class="badge bg-dark text-muted">{{ p.pos or '' }}</span>
+                                                    <span class="d-flex align-items-center gap-2">
+                                                        {% if r %}<span class="badge bg-{{ r_cls }}" title="Rating">{{ '%.1f'|format(r_num) }}</span>{% endif %}
+                                                        <span class="badge bg-dark text-muted">{{ p.pos or '' }}</span>
+                                                    </span>
                                                 </li>
                                             {% endfor %}
                                         </ul>
