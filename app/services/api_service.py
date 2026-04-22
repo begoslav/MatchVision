@@ -25,6 +25,8 @@ CACHE_TTL = {
     '/leagues':             86400,  # 24 h
     '/teams/statistics':    21600,  # 6 h
     '/teams':               86400,  # 24 h
+    '/transfers':           86400,  # 24 h (transfers rarely change)
+    '/players':             3600,   # 1 h
 }
 
 def _cache_ttl(endpoint: str, params: Dict) -> int:
@@ -387,6 +389,20 @@ class APIFootballService:
             matches = response['response']
             matches.sort(key=lambda m: m['fixture']['date'], reverse=True)
             return matches[:limit]
+        return []
+
+    def get_player_transfers(self, player_id: int) -> List[Dict]:
+        """Get transfer history for a player."""
+        response = self._make_request('/transfers', params={'player': player_id})
+        if response and response.get('response'):
+            transfers = response['response']
+            if transfers:
+                # API returns list with one item containing all transfers
+                return sorted(
+                    transfers[0].get('transfers', []),
+                    key=lambda t: t.get('date', ''),
+                    reverse=True
+                )
         return []
 
 # Create singleton instance

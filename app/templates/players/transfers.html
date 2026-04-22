@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if player_data %}Historie transferů – {{ player_data.player.name }}{% else %}Transfery{% endif %} - MatchVision
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    {% set player = player_data.player if player_data else none %}
+
+    <div class="d-flex gap-2 mb-4">
+        <a href="{{ url_for('players.profile', player_id=player_id) }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Zpět na profil
+        </a>
+    </div>
+
+    <!-- Hlavička -->
+    {% if player %}
+    <div class="card bg-dark border-secondary mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center gap-3">
+                {% if player.photo %}
+                    <img src="{{ player.photo }}" alt="{{ player.name }}"
+                         class="rounded-circle border border-secondary"
+                         style="width:70px;height:70px;object-fit:cover;">
+                {% else %}
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                         style="width:70px;height:70px;">
+                        <i class="fas fa-user fa-2x text-muted"></i>
+                    </div>
+                {% endif %}
+                <div>
+                    <h3 class="mb-0">{{ player.name }}</h3>
+                    <div class="text-muted small mt-1">
+                        {% if player.nationality %}<span class="me-3"><i class="fas fa-flag me-1"></i>{{ player.nationality }}</span>{% endif %}
+                        {% if player.age %}<span><i class="fas fa-birthday-cake me-1"></i>{{ player.age }} let</span>{% endif %}
+                    </div>
+                </div>
+                <div class="ms-auto">
+                    <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                        <i class="fas fa-exchange-alt me-1"></i> Historie transferů
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Timeline transferů -->
+    {% if transfers %}
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h5 class="mb-0">
+                    <i class="fas fa-exchange-alt me-2 text-warning"></i>
+                    Transfery ({{ transfers | length }})
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Datum</th>
+                                <th>Z klubu</th>
+                                <th class="text-center">→</th>
+                                <th>Do klubu</th>
+                                <th>Typ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in transfers %}
+                            <tr>
+                                <td class="text-muted small fw-bold">
+                                    {{ t.date or '—' }}
+                                </td>
+                                <td>
+                                    {% if t.teams and t.teams.out %}
+                                        <div class="d-flex align-items-center gap-2">
+                                            {% if t.teams.out.logo %}
+                                                <img src="{{ t.teams.out.logo }}" style="height:24px;width:24px;object-fit:contain;">
+                                            {% endif %}
+                                            <span>{{ t.teams.out.name or '—' }}</span>
+                                        </div>
+                                    {% else %}—{% endif %}
+                                </td>
+                                <td class="text-center text-muted">
+                                    <i class="fas fa-arrow-right"></i>
+                                </td>
+                                <td>
+                                    {% if t.teams and t.teams.in %}
+                                        <div class="d-flex align-items-center gap-2">
+                                            {% if t.teams.in.logo %}
+                                                <img src="{{ t.teams.in.logo }}" style="height:24px;width:24px;object-fit:contain;">
+                                            {% endif %}
+                                            <span>{{ t.teams.in.name or '—' }}</span>
+                                        </div>
+                                    {% else %}—{% endif %}
+                                </td>
+                                <td>
+                                    {% set ttype = t.type | lower if t.type else '' %}
+                                    {% if 'free' in ttype %}
+                                        <span class="badge bg-secondary">Volný přestup</span>
+                                    {% elif 'loan' in ttype %}
+                                        <span class="badge bg-info text-dark">Hostování</span>
+                                    {% elif 'n/a' in ttype or ttype == '' %}
+                                        <span class="badge bg-dark text-muted border border-secondary">—</span>
+                                    {% else %}
+                                        <span class="badge bg-success">{{ t.type }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="card bg-dark border-secondary">
+            <div class="card-body text-center text-muted py-5">
+                <i class="fas fa-exchange-alt fa-3x mb-3 d-block"></i>
+                <h5>Žádné transfery nenalezeny</h5>
+                <p class="small">Pro tohoto hráče nejsou k dispozici data o transferech.</p>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

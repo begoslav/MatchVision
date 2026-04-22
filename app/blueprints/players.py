@@ -16,3 +16,17 @@ def profile(player_id):
         recent_fixtures=recent_fixtures,
         player_id=player_id,
     )
+
+
+@players_bp.route('/<int:player_id>/transfers')
+def transfers(player_id):
+    """Player transfer history page."""
+    player_data = api_service.get_player_profile(player_id)
+    transfer_list = api_service.get_player_transfers(player_id)
+
+    return render_template(
+        'players/transfers.html',
+        player_data=player_data,
+        transfers=transfer_list,
+        player_id=player_id,
+    )
