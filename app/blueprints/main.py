@@ -30,6 +30,17 @@ def leagues():
     european_data = api_service.get_european_competitions()
     return render_template('leagues.html', leagues=leagues_data, european=european_data)
 
+@main_bp.route('/league/<int:league_id>/history')
+def league_history(league_id):
+    """View league winners history for last 5 seasons."""
+    history = api_service.get_league_history(league_id, num_seasons=5)
+    league_info = api_service.get_league_info(league_id)
+    return render_template('league_history.html',
+                           history=history,
+                           league_info=league_info,
+                           league_id=league_id)
+
+
 @main_bp.route('/league/<int:league_id>')
 def league_standings(league_id):
     """View league standings or knockout bracket depending on competition type."""

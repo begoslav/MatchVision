@@ -392,18 +392,72 @@ class APIFootballService:
         return []
 
     def get_player_transfers(self, player_id: int) -> List[Dict]:
-        """Get transfer history for a player."""
         response = self._make_request('/transfers', params={'player': player_id})
         if response and response.get('response'):
             transfers = response['response']
             if transfers:
-                # API returns list with one item containing all transfers
                 return sorted(
                     transfers[0].get('transfers', []),
                     key=lambda t: t.get('date', ''),
                     reverse=True
                 )
         return []
+
+    def get_league_history(self, league_id: int, num_seasons: int = 5) -> List[Dict]:
+        """Get league winners for the last N seasons.
+        Domestic: rank-1 from standings. European cups: Final fixture winner.
+        """
+        current = _current_season()
+        european_cup_ids = {2, 3, 848}
+        results = []
+
+        for i in range(num_seasons):
+            season = current - i
+            entry = {'season': season, 'winner': None, 'runner_up': None,
+                     'score': None, 'date': None, 'points': None}
+
+            if league_id in european_cup_ids:
+                fixture_resp = self._make_request('/fixtures', params={
+                    'league': league_id, 'season': season,
+                    'round': 'Final', 'status': 'FT',
+                })
+                if fixture_resp and fixture_resp.get('response'):
+                    finals = fixture_resp['response']
+                    if finals:
+                        match = finals[0]
+                        home = match['teams']['home']
+                        away = match['teams']['away']
+                        gh = match['goals']['home'] or 0
+                        ga = match['goals']['away'] or 0
+                        if gh > ga:
+                            entry['winner'], entry['runner_up'] = home, away
+                        elif ga > gh:
+                            entry['winner'], entry['runner_up'] = away, home
+                        else:
+                            ph = ((match.get('score', {}).get('penalty') or {}).get('home') or 0)
+                            pa = ((match.get('score', {}).get('penalty') or {}).get('away') or 0)
+                            entry['winner'], entry['runner_up'] = (home, away) if ph > pa else (away, home)
+                        entry['score'] = f"{gh}:{ga}"
+                        entry['date'] = match['fixture']['date'][:10]
+            else:
+                resp = self._make_request('/standings', params={
+                    'league': league_id, 'season': season,
+                })
+                if resp and resp.get('response'):
+                    data = resp['response'][0]
+                    groups = data.get('league', {}).get('standings', [])
+                    if groups and groups[0]:
+                        top = sorted(groups[0], key=lambda t: t.get('rank', 99))
+                        if top:
+                            entry['winner'] = top[0].get('team')
+                            entry['points'] = top[0].get('points')
+                            if len(top) > 1:
+                                entry['runner_up'] = top[1].get('team')
+
+            if entry['winner']:
+                results.append(entry)
+
+        return results
 
 # Create singleton instance
 api_service = APIFootballService()

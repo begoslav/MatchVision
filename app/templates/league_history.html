@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if league_info %}{{ league_info.league.name if league_info.league else 'Liga' }}{% else %}Liga{% endif %} – Historie - MatchVision
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    {% set li = league_info.league if league_info and league_info.league else none %}
+    {% set lc = league_info.country if league_info and league_info.country else none %}
+
+    <div class="d-flex gap-2 mb-4 flex-wrap align-items-center">
+        <a href="{{ url_for('main.leagues') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Zpět na soutěže
+        </a>
+        <a href="{{ url_for('main.league_standings', league_id=league_id) }}" class="btn btn-outline-primary">
+            <i class="fas fa-table me-1"></i> Tabulka
+        </a>
+    </div>
+
+    <!-- Hlavička ligy -->
+    <div class="card bg-dark border-secondary mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center gap-4">
+                {% if li and li.logo %}
+                    <img src="{{ li.logo }}" alt="{{ li.name }}" style="height:72px;object-fit:contain;">
+                {% endif %}
+                <div>
+                    <h2 class="mb-1">{{ li.name if li else 'Soutěž' }}</h2>
+                    {% if lc %}
+                        <span class="text-muted"><i class="fas fa-globe me-1"></i>{{ lc.name }}</span>
+                    {% endif %}
+                </div>
+                <div class="ms-auto">
+                    <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                        <i class="fas fa-trophy me-1"></i> Historie vítězů
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline vítězů -->
+    {% if history %}
+        <div class="row g-4">
+            {% for entry in history %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                        <span class="fw-bold fs-5">{{ entry.season }}/{{ (entry.season + 1) | string | slice(2) | join }}</span>
+                        <span class="badge bg-warning text-dark"><i class="fas fa-trophy"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <!-- Vítěz -->
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            {% if entry.winner.logo %}
+                                <img src="{{ entry.winner.logo }}" style="height:48px;width:48px;object-fit:contain;">
+                            {% endif %}
+                            <div>
+                                <div class="fw-bold fs-5">{{ entry.winner.name }}</div>
+                                <div class="text-warning small">
+                                    <i class="fas fa-trophy me-1"></i>
+                                    {% if entry.points %}
+                                        {{ entry.points }} bodů
+                                    {% elif entry.score %}
+                                        Finále {{ entry.score }}
+                                        {% if entry.date %}<span class="text-muted ms-1">({{ entry.date }})</span>{% endif %}
+                                    {% else %}
+                                        Vítěz
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Druhý -->
+                        {% if entry.runner_up %}
+                        <hr class="border-secondary my-2">
+                        <div class="d-flex align-items-center gap-2">
+                            {% if entry.runner_up.logo %}
+                                <img src="{{ entry.runner_up.logo }}" style="height:28px;width:28px;object-fit:contain;">
+                            {% endif %}
+                            <div class="text-muted small">
+                                <span class="me-1">🥈</span>{{ entry.runner_up.name }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer border-secondary">
+                        <a href="{{ url_for('main.league_standings', league_id=league_id, season=entry.season) }}"
+                           class="btn btn-sm btn-outline-secondary w-100">
+                            <i class="fas fa-table me-1"></i> Zobrazit tabulku {{ entry.season }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card bg-dark border-secondary">
+            <div class="card-body text-center text-muted py-5">
+                <i class="fas fa-trophy fa-3x mb-3 d-block"></i>
+                <h5>Historie není k dispozici</h5>
+                <p class="small">Data o vítězích předchozích sezón se nepodařilo načíst.</p>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
