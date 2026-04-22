@@ -131,6 +131,115 @@
                     </div>
                 </div>
 
+                <!-- Match Timeline -->
+                {% if match_data.events %}
+                <div class="card bg-darker border-secondary mt-4">
+                    <div class="card-header border-secondary">
+                        <h5 class="mb-0"><i class="fas fa-stream"></i> Průběh zápasu</h5>
+                    </div>
+                    <div class="card-body px-2 px-md-4">
+                        {% set home_id = match_data.teams.home.id %}
+                        <div class="timeline-container">
+                            {% for ev in match_data.events %}
+                                {% if ev.type in ['Goal', 'Card', 'subst'] %}
+                                    {% set is_home = (ev.team.id == home_id) %}
+                                    {% set minute = ev.time.elapsed | string %}
+                                    {% set extra = ('+' ~ ev.time.extra | string) if ev.time.extra else '' %}
+
+                                    {# Determine icon and color #}
+                                    {% if ev.type == 'Goal' %}
+                                        {% if ev.detail == 'Own Goal' %}
+                                            {% set icon = '⚽' %}
+                                            {% set color = 'text-warning' %}
+                                            {% set badge = 'bg-warning text-dark' %}
+                                            {% set label = 'Vlastní gól' %}
+                                        {% elif ev.detail == 'Penalty' %}
+                                            {% set icon = '⚽' %}
+                                            {% set color = 'text-success' %}
+                                            {% set badge = 'bg-success' %}
+                                            {% set label = 'Penalta' %}
+                                        {% elif ev.detail == 'Missed Penalty' %}
+                                            {% set icon = '❌' %}
+                                            {% set color = 'text-danger' %}
+                                            {% set badge = 'bg-secondary' %}
+                                            {% set label = 'Neproměněná penalta' %}
+                                        {% else %}
+                                            {% set icon = '⚽' %}
+                                            {% set color = 'text-success' %}
+                                            {% set badge = 'bg-success' %}
+                                            {% set label = 'Gól' %}
+                                        {% endif %}
+                                    {% elif ev.type == 'Card' %}
+                                        {% if ev.detail == 'Red Card' %}
+                                            {% set icon = '🟥' %}
+                                            {% set color = 'text-danger' %}
+                                            {% set badge = 'bg-danger' %}
+                                            {% set label = 'Červená karta' %}
+                                        {% elif ev.detail == 'Second Yellow card' %}
+                                            {% set icon = '🟨🟥' %}
+                                            {% set color = 'text-danger' %}
+                                            {% set badge = 'bg-danger' %}
+                                            {% set label = '2. žlutá' %}
+                                        {% else %}
+                                            {% set icon = '🟨' %}
+                                            {% set color = 'text-warning' %}
+                                            {% set badge = 'bg-warning text-dark' %}
+                                            {% set label = 'Žlutá karta' %}
+                                        {% endif %}
+                                    {% elif ev.type == 'subst' %}
+                                        {% set icon = '🔄' %}
+                                        {% set color = 'text-info' %}
+                                        {% set badge = 'bg-info text-dark' %}
+                                        {% set label = 'Střídání' %}
+                                    {% endif %}
+
+                                    <div class="timeline-row d-flex align-items-start gap-2 mb-3
+                                                {% if is_home %}flex-row{% else %}flex-row-reverse{% endif %}">
+
+                                        {# Team logo + minute badge #}
+                                        <div class="timeline-side text-center" style="min-width:56px;">
+                                            <img src="{{ ev.team.logo }}" style="height:22px;width:22px;object-fit:contain;" class="mb-1">
+                                            <div>
+                                                <span class="badge {{ badge }} fw-bold" style="font-size:0.75rem;">
+                                                    {{ minute }}{{ extra }}'
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {# Center line dot #}
+                                        <div class="timeline-dot-col d-flex flex-column align-items-center" style="padding-top:2px;">
+                                            <div class="rounded-circle {{ color.replace('text-','bg-') }}"
+                                                 style="width:10px;height:10px;flex-shrink:0;margin-top:6px;"></div>
+                                        </div>
+
+                                        {# Event info #}
+                                        <div class="timeline-event-info {% if is_home %}text-start{% else %}text-end{% endif %} flex-grow-1">
+                                            <div class="small {{ color }} fw-semibold">{{ icon }} {{ label }}</div>
+                                            {% if ev.type == 'subst' %}
+                                                <div class="small">
+                                                    <span class="text-success">▲ {{ ev.assist.name if ev.assist else '?' }}</span>
+                                                    <span class="text-muted mx-1">/</span>
+                                                    <span class="text-danger">▼ {{ ev.player.name if ev.player else '?' }}</span>
+                                                </div>
+                                            {% else %}
+                                                <div class="fw-bold" style="font-size:0.9rem;">
+                                                    {{ ev.player.name if ev.player else '?' }}
+                                                </div>
+                                                {% if ev.assist and ev.assist.name and ev.type == 'Goal' %}
+                                                    <div class="text-muted small">
+                                                        🅰️ {{ ev.assist.name }}
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
                 <!-- Lineups -->
                 <div class="card bg-darker border-secondary mt-4">
                     <div class="card-header border-secondary">

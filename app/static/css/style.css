@@ -585,3 +585,40 @@ body.light-mode hr {
     /* button spacing */
     .btn-sm { padding: 0.25rem 0.55rem; font-size: 0.78rem; }
 }
+
+/* ── Match Timeline ─────────────────────────────────────────── */
+.timeline-container {
+    position: relative;
+}
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-color);
+    transform: translateX(-50%);
+    z-index: 0;
+}
+.timeline-row {
+    position: relative;
+    z-index: 1;
+}
+.timeline-dot-col {
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+}
+.timeline-side {
+    flex-shrink: 0;
+    width: 56px;
+}
+.timeline-event-info {
+    max-width: calc(50% - 70px);
+}
+@media (max-width: 576px) {
+    .timeline-container::before { left: 28px; }
+    .timeline-row { flex-direction: row !important; }
+    .timeline-event-info { text-align: left !important; max-width: calc(100% - 90px); }
+}
