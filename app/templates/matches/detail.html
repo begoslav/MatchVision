@@ -75,24 +75,24 @@
                             {% set home_stats_list = match_data.statistics[0].statistics %}
                             {% set away_stats_list = match_data.statistics[1].statistics %}
 
-                            {# Build dict for easy lookup #}
+                            {# Build dict for easy lookup (lowercase keys for robustness) #}
                             {% set home = {} %}
                             {% set away = {} %}
-                            {% for s in home_stats_list %}{% if home.update({s.type: s.value}) %}{% endif %}{% endfor %}
-                            {% for s in away_stats_list %}{% if away.update({s.type: s.value}) %}{% endif %}{% endfor %}
+                            {% for s in home_stats_list %}{% if home.update({s.type | lower: s.value}) %}{% endif %}{% endfor %}
+                            {% for s in away_stats_list %}{% if away.update({s.type | lower: s.value}) %}{% endif %}{% endfor %}
 
                             {% set stat_rows = [
-                                ('Střely celkem', 'Total Shots'),
-                                ('Střely na branku', 'Shots on Goal'),
-                                ('Držení míče', 'Ball Possession'),
-                                ('Přihrávky', 'Total Passes'),
-                                ('Přesnost přihrávek', 'Passes %'),
-                                ('Fauly', 'Fouls'),
-                                ('Rohy', 'Corner Kicks'),
-                                ('Ofsajdy', 'Offsides'),
-                                ('Žluté karty', 'Yellow Cards'),
-                                ('Červené karty', 'Red Cards'),
-                                ('Zákroky brankáře', 'Goalkeeper Saves')
+                                ('Střely celkem', 'total shots'),
+                                ('Střely na branku', 'shots on goal'),
+                                ('Držení míče', 'ball possession'),
+                                ('Přihrávky', 'total passes'),
+                                ('Přesnost přihrávek', 'passes %'),
+                                ('Fauly', 'fouls'),
+                                ('Rohy', 'corner kicks'),
+                                ('Ofsajdy', 'offsides'),
+                                ('Žluté karty', 'yellow cards'),
+                                ('Červené karty', 'red cards'),
+                                ('Zákroky brankáře', 'goalkeeper saves')
                             ] %}
 
                             {% for label, key in stat_rows %}
