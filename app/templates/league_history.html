@@ -48,7 +48,7 @@
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card bg-dark border-secondary h-100">
                     <div class="card-header border-secondary d-flex justify-content-between align-items-center">
-                        <span class="fw-bold fs-5">{{ entry.season }}/{{ (entry.season + 1) | string | slice(2) | join }}</span>
+                        <span class="fw-bold fs-5">{{ entry.season }}/{{ ((entry.season + 1) | string)[2:] }}</span>
                         <span class="badge bg-warning text-dark"><i class="fas fa-trophy"></i></span>
                     </div>
                     <div class="card-body">
